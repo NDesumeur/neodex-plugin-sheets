@@ -3,7 +3,7 @@
   "name": "NeoSheets",
   "version": "1.2.1",
   "author": "NDesumeur",
-  "description": "Un tableur : formules, fonctions, mise en forme, graphiques. Ouvre et enregistre les fichiers Excel.",
+  "description": "Un tableur : formules avec près de 40 fonctions en français ou en anglais (SOMME, SI, RECHERCHEV, NB.SI…), recopie vers le bas, mise en forme et formats de nombres, tri, insertion de lignes et colonnes, plusieurs feuilles et graphiques en barres, courbes ou camembert. Ouvre et exporte Excel, OpenDocument, CSV et PDF ; classeurs enregistrés tout seuls et synchronisés.",
   "icon": "icon.png",
   "entry": "index.js",
   "view": "sheets",
