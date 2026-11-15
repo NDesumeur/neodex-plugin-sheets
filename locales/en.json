@@ -126,7 +126,6 @@
  "Trier": "Sort",
  "Trier les lignes selon la colonne sélectionnée": "Sort rows by selected column",
  "UPPER": "UPPER",
- "Un tableur : formules avec près de 40 fonctions en français ou en anglais (SOMME, SI, RECHERCHEV, NB.SI…), recopie vers le bas, mise en forme et formats de nombres, tri, insertion de lignes et colonnes, plusieurs feuilles et graphiques en barres, courbes ou camembert. Ouvre et exporte Excel, OpenDocument, CSV et PDF ; classeurs enregistrés tout seuls et synchronisés.": "A spreadsheet: formulas with nearly 40 functions in French or English (SUM, IF, VLOOKUP, COUNTIF…), fill down, formatting and number formats, sorting, inserting rows and columns, several sheets and bar, line or pie charts. Opens and exports Excel, OpenDocument, CSV and PDF; workbooks saved automatically and synced.",
  "VLOOKUP": "VLOOKUP",
  "VRAI": "TRUE",
  "Valeur ou formule (=SOMME(A1:A5))": "Value or formula (=SUM(A1:A5))",
@@ -135,5 +134,6 @@
  "» ouvert dans": "» open in",
  "À droite": "Right",
  "À gauche": "Left",
- "tbPop ofMenu px on": "TbPop ofMenu px on"
+ "tbPop ofMenu px on": "TbPop ofMenu px on",
+ "Un tableur : formules avec près de 40 fonctions en français ou en anglais (SOMME, SI, RECHERCHEV, NB.SI…), recopie vers le bas, mise en forme et formats de nombres, tri, insertion de lignes et colonnes, plusieurs feuilles et graphiques en barres, courbes ou camembert. Ouvre et exporte Excel, OpenDocument, CSV et PDF ; classeurs enregistrés tout seuls et synchronisés. Les colonnes gardent leur largeur et la grille défile de côté, au lieu d'être tassée dans la fenêtre sur un petit écran ; cellules et textes un peu plus grands sur un grand écran.": "A spreadsheet: formulas with nearly 40 functions in French or English (SUM, IF, VLOOKUP, COUNTIF…), fill down, formatting and number formats, sorting, inserting rows and columns, several sheets and bar, line or pie charts. Opens and exports Excel, OpenDocument, CSV and PDF; workbooks saved automatically and synced. Columns keep their width and the grid scrolls sideways instead of being squeezed into the window on a small screen; slightly larger cells and text on a big screen."
 }

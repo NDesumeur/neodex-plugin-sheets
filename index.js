@@ -5,14 +5,14 @@ const HTML = "";
 /*CSS-MOVED*/ const CSS = `.ofMenu .tbtn{justify-content:flex-start;font:14px var(--text);letter-spacing:0}
 .ofDropM .tbtn{justify-content:flex-start;font:14px var(--text);letter-spacing:0}
 .ofApp{display:flex;background:var(--bg0)}
-.ofSide{width:260px;flex:none;display:flex;flex-direction:column;gap:10px;padding:18px 14px;border-right:3px solid var(--line);background:rgba(var(--d8),.6);overflow:hidden}
+.ofSide{width:clamp(210px,14vw,290px);flex:none;display:flex;flex-direction:column;gap:10px;padding:18px 14px;border-right:3px solid var(--line);background:rgba(var(--d8),.6);overflow:hidden}
 .ofSide .row{gap:8px}
-.ofSide .btn{flex:1;padding:8px 6px;font-size:9px}
-.ofSearch{padding:7px 10px;font-size:14px}
+.ofSide .btn{flex:1;padding:9px 6px;font-size:11px}
+.ofSearch{padding:8px 10px;font-size:15px}
 .ofList{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;margin:0 -6px;padding:0 6px}
 .ofItem{all:unset;cursor:var(--cp,pointer);display:flex;flex-direction:column;gap:2px;padding:8px 10px;color:var(--lilac)}
-.ofItem .n{color:#fff;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ofItem .hint{font-size:12px}
+.ofItem .n{color:#fff;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ofItem .hint{font-size:14px}
 .ofItem:hover{background:rgba(255,255,255,.04)}
 .ofItem.on{background:rgba(var(--mgr),.18);box-shadow:inset 3px 0 0 var(--magenta)}
 .ofBody{flex:1;min-width:0;display:flex;flex-direction:column}
@@ -66,8 +66,8 @@ const HTML = "";
 .shX .shInput{background:#fff;color:#202124;font:13px 'Segoe UI',Arial,sans-serif;border:1px solid #dadce0;border-radius:0 4px 4px 0;box-shadow:none;padding:5px 10px}
 .shX .shInput:focus{border-color:#1a73e8;outline:none}
 .shX .shGridW{background:#fff}
-.shTbl{border-collapse:separate;border-spacing:0;table-layout:fixed;font:13px Arial,'Segoe UI',sans-serif;color:#202124;user-select:none}
-.shTbl th{position:sticky;background:#f8f9fa;color:#5f6368;font:12px 'Segoe UI',Arial,sans-serif;font-weight:400;text-align:center;height:22px;padding:0 4px;z-index:1;border-right:1px solid #c7c7c7;border-bottom:1px solid #c7c7c7;overflow:visible}
+.shTbl{border-collapse:separate;border-spacing:0;table-layout:fixed;font:clamp(13px,.75vw,15px) Arial,'Segoe UI',sans-serif;color:#202124;user-select:none}
+.shTbl th{position:sticky;background:#f8f9fa;color:#5f6368;font:clamp(12px,.7vw,14px) 'Segoe UI',Arial,sans-serif;font-weight:400;text-align:center;height:clamp(22px,1.25vw,26px);padding:0 4px;z-index:1;border-right:1px solid #c7c7c7;border-bottom:1px solid #c7c7c7;overflow:visible}
 .shTbl tr:first-child th{top:0;cursor:default}
 .shTbl th.on{background:#e8eaed;color:#202124;font-weight:600}
 .shTbl tr:first-child th.on{box-shadow:inset 0 -3px 0 #1a73e8}.shTbl th.shRh.on{box-shadow:inset -3px 0 0 #1a73e8}
@@ -75,15 +75,15 @@ const HTML = "";
 .shTbl th.shCorner{top:0;left:0;z-index:3;width:46px;background:#f8f9fa linear-gradient(135deg,transparent 60%,#bdc1c6 60%) no-repeat right 4px bottom 4px/12px 12px}
 .shTbl th.shCh::after{content:'';position:absolute;right:-3px;top:0;bottom:0;width:6px;cursor:col-resize;z-index:2}
 .shTbl th.shCh:hover{background:#eceff1}
-.shTbl td{border-right:1px solid #e1e3e6;border-bottom:1px solid #e1e3e6;height:22px;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:cell;background:#fff}
+.shTbl td{border-right:1px solid #e1e3e6;border-bottom:1px solid #e1e3e6;height:clamp(22px,1.25vw,26px);padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:cell;background:#fff}
 .shTbl td.err{color:#d93025}.shTbl td.num{text-align:right}
 .shTbl td.sel{background-color:#e8f0fe!important}.shTbl td.cur{outline:2px solid #1a73e8;outline-offset:-2px;background-color:#fff!important}
-.shEdit{border:2px solid #1a73e8;font:13px Arial,'Segoe UI',sans-serif;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.shEdit{border:2px solid #1a73e8;font:clamp(13px,.75vw,15px) Arial,'Segoe UI',sans-serif;box-shadow:0 2px 6px rgba(0,0,0,.25)}
 .shX .shTabs{background:#f1f3f4;border-top:1px solid #dadce0;padding:0 8px;gap:0}
-.shX .shTab{background:transparent;color:#3c4043;border-radius:0 0 4px 4px;padding:7px 18px;font:13px 'Segoe UI',Arial,sans-serif}
+.shX .shTab{background:transparent;color:#3c4043;border-radius:0 0 4px 4px;padding:7px 18px;font:14px 'Segoe UI',Arial,sans-serif}
 .shX .shTab:hover{background:#e3e6e8}.shX .shTab.on{background:#fff;color:#188038;font-weight:600;box-shadow:inset 0 -3px 0 #188038,0 1px 3px rgba(0,0,0,.2)}
 .shX .shTab.add{font:700 16px 'Segoe UI',Arial,sans-serif;padding:4px 14px}
-.shX .ofStatus{background:#f8f9fa;color:#5f6368;border-top:1px solid #dadce0;text-align:right;font:12px 'Segoe UI',Arial,sans-serif;padding:5px 14px}
+.shX .ofStatus{background:#f8f9fa;color:#5f6368;border-top:1px solid #dadce0;text-align:right;font:13px 'Segoe UI',Arial,sans-serif;padding:5px 14px}
 .shEdit{position:absolute;z-index:5;padding:0 4px;outline:none;color:#111;background:#fff;box-sizing:border-box}
 .shTab{all:unset;cursor:var(--cp,pointer);padding:6px 14px;color:var(--lilac);font-size:14px;background:var(--btn)}
 .shTab.on{background:rgba(var(--mgr),.35);color:#fff}
@@ -491,6 +491,8 @@ function shSize() {
   const keys = Object.keys(shSheet().cells).map(shCell).filter(Boolean);
   nsh.cols = Math.max(26, ...keys.map(k => k.c + 4), nsh.sel.c2 + 3); nsh.rows = Math.max(100, ...keys.map(k => k.r + 20), nsh.sel.r2 + 10);
 }
+// la largeur du tableau = la somme de ses colonnes : sinon il est tassé dans la fenêtre (table-layout fixe) au lieu de défiler
+function shTblW() { const h = nsh.grid.rows?.[0]; if (h) nsh.grid.style.width = [...h.cells].reduce((a, th) => a + (parseFloat(th.style.width) || th.offsetWidth || 46), 0) + 'px'; }
 function shBuild() {
   if (!nsh.cur) return;
   shSize();
@@ -502,7 +504,7 @@ function shBuild() {
     for (let c = 0; c < nsh.cols; c++) { const td = el('td'); td.dataset.c = c; td.dataset.r = r; tr.append(td); }
     rows.push(tr);
   }
-  nsh.grid.replaceChildren(...rows);
+  nsh.grid.replaceChildren(...rows); shTblW();
   nsh.title.value = nsh.cur.name;
   nsh.tabsBar.replaceChildren(...nsh.cur.data.sheets.map((t, i) => {
     const b = el('button', 'shTab' + (i === nsh.cur.data.cur ? ' on' : ''), t.name);
@@ -659,7 +661,7 @@ function shSort(dir) {
 function shResize(e, th) {
   e.preventDefault();
   const x0 = e.clientX, w0 = th.offsetWidth, col = shColName(+th.dataset.col), s = shSheet();
-  const move = m => { const w = Math.max(36, w0 + m.clientX - x0); th.style.width = w + 'px'; (s.cw ||= {})[col] = w; };
+  const move = m => { const w = Math.max(36, w0 + m.clientX - x0); th.style.width = w + 'px'; (s.cw ||= {})[col] = w; shTblW(); };
   addEventListener('pointermove', move);
   addEventListener('pointerup', () => { removeEventListener('pointermove', move); officeSave(); }, {once: true});
 }
