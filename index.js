@@ -83,6 +83,7 @@ const HTML = "";
 .shX .shTab{background:transparent;color:#3c4043;border-radius:0 0 4px 4px;padding:7px 18px;font:14px 'Segoe UI',Arial,sans-serif}
 .shX .shTab:hover{background:#e3e6e8}.shX .shTab.on{background:#fff;color:#188038;font-weight:600;box-shadow:inset 0 -3px 0 #188038,0 1px 3px rgba(0,0,0,.2)}
 .shX .shTab.add{font:700 16px 'Segoe UI',Arial,sans-serif;padding:4px 14px}
+.shPiv{position:fixed;display:flex;flex-direction:column;gap:6px;padding:14px;min-width:280px;z-index:60}.shPiv label{display:grid;grid-template-columns:90px 1fr;gap:6px;align-items:center;font-size:14px}.shPiv .row{display:flex;gap:6px;justify-content:flex-end}
 .shX .ofStatus{background:#f8f9fa;color:#5f6368;border-top:1px solid #dadce0;text-align:right;font:13px 'Segoe UI',Arial,sans-serif;padding:5px 14px}
 .shEdit{position:absolute;z-index:5;padding:0 4px;outline:none;color:#111;background:#fff;box-sizing:border-box}
 .shTab{all:unset;cursor:var(--cp,pointer);padding:6px 14px;color:var(--lilac);font-size:14px;background:var(--btn)}
@@ -430,12 +431,14 @@ nsh.mount = main => {
       ['Insérer une colonne à gauche', () => shInsert('c', 0)], ['Insérer une colonne à droite', () => shInsert('c', 1)], ['Supprimer la colonne', () => shDelete('c')]], 'Lignes et colonnes'),
     ofDrop('Trier', [['Colonne de A à Z', () => shSort(1)], ['Colonne de Z à A', () => shSort(-1)]], 'Trier les lignes selon la colonne sélectionnée'),
     ofBtn('⇩', 'Recopier vers le bas (Ctrl+D)', shFillDown), ofDrop('Fonction', fnList.map(f => [f + '(…)', () => shStartEdit('=' + f + '(')]), 'Insérer une fonction'),
-    ofBtn('📊', 'Graphique de la sélection', shChart), el('i', 'ofSep'),
+    ofBtn('📊', 'Graphique de la sélection', shChart),
+    ofDrop('Conditions', [...Object.entries(SH_CF).map(([k, l]) => [l, () => shCfAdd(k)]), ['Effacer les règles de la sélection', shCfClear]], 'Mise en forme conditionnelle (la couleur de fond choisie colore les cellules)'),
+    ofBtn('⊞ Croisé', 'Tableau croisé dynamique de la sélection', shPivotUi), el('i', 'ofSep'),
     ofDrop('Exporter', [['Excel (.xlsx)…', () => ofExport(nsh, 'xlsx')], ['OpenDocument (.ods)…', () => ofExport(nsh, 'ods')], ['CSV (.csv)…', () => ofExport(nsh, 'csv')], ['PDF…', () => ofExport(nsh, 'pdf')]]));
   fx.append(name, el('span', 'shFxL', 'fx'), input);
   gridW.append(grid, edit);
   main.append(title, bar, fx, gridW, tabsBar, status);
-  Object.assign(nsh, {title, input, name, grid, gridW, tabsBar, status, edit, nf});
+  Object.assign(nsh, {title, input, name, grid, gridW, tabsBar, status, edit, nf, bg});
   title.oninput = () => { if (nsh.cur) { nsh.cur.name = title.value.trim() || 'Sans titre'; ofTouch(nsh, nsh.cur); } };
   input.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); shSet(nsh.sel.c, nsh.sel.r, input.value); shMove(0, 1); gridW.focus(); } if (e.key === 'Escape') { shSelShow(); gridW.focus(); } };
   // the grid: click / drag selects, double click edits, the header borders resize the columns
@@ -516,10 +519,71 @@ function shBuild() {
   }), (() => { const b = el('button', 'shTab add', '+'); b.title = 'Nouvelle feuille'; b.onclick = () => { shSnapshot(); const d = nsh.cur.data; let n = d.sheets.length + 1; while (d.sheets.some(x => x.name === 'Feuille ' + n)) n++; d.sheets.push({name: 'Feuille ' + n, cells: {}, cw: {}}); d.cur = d.sheets.length - 1; shSaved(true); }; return b; })());
   shRefresh();
 }
+// la mise en forme conditionnelle : s.cf = [{b: {c1, r1, c2, r2}, k, v, bg}] ; k : gt, lt, eq, has, scale (échelle de couleurs), bars (barres de données)
+// shortcut: les plages des règles ne suivent pas les insertions et suppressions de lignes ou de colonnes
+const SH_CF = {gt: 'Plus grand que…', lt: 'Plus petit que…', eq: 'Égal à…', has: 'Contient le texte…', scale: 'Échelle de couleurs', bars: 'Barres de données'};
+function shCfStyle(s, si, calc) {  // adresse -> style ajouté par les règles (la dernière règle gagne)
+  const out = {};
+  for (const R of s.cf || []) {
+    const cells = []; for (let r = R.b.r1; r <= R.b.r2; r++) for (let c = R.b.c1; c <= R.b.c2; c++) { const a = shAddr(c, r); if (s.cells[a]?.raw) cells.push([a, calc.value(si, a)]); }
+    const nums = cells.map(([, v]) => v).filter(v => typeof v === 'number'), lo = Math.min(...nums), hi = Math.max(...nums), q = v => hi > lo ? (v - lo) / (hi - lo) : 1;
+    for (const [a, v] of cells) {
+      if (R.k === 'scale') { if (typeof v === 'number') out[a] = 'background:' + shMix('#f8696b', '#ffeb84', '#63be7b', q(v)) + ';'; continue; }
+      if (R.k === 'bars') { if (typeof v === 'number') { const p = Math.round(q(v) * 100); out[a] = 'background:linear-gradient(90deg,' + (R.bg || '#638ec6') + '88 ' + p + '%,transparent ' + p + '%);'; } continue; }
+      const n = shNum(R.v), hit = R.k === 'has' ? String(v).toLowerCase().includes(String(R.v).toLowerCase()) : R.k === 'eq' ? (typeof v === 'number' ? v === n : String(v) === String(R.v)) : typeof v === 'number' && (R.k === 'gt' ? v > n : v < n);
+      if (hit) out[a] = 'background:' + (R.bg || '#fce8b2') + ';';
+    }
+  }
+  return out;
+}
+const shMix = (a, m, b, t) => { const h = x => [1, 3, 5].map(i => parseInt(x.slice(i, i + 2), 16)), [p, q2, f] = t < .5 ? [h(a), h(m), t * 2] : [h(m), h(b), t * 2 - 1]; return 'rgb(' + p.map((x, i) => Math.round(x + (q2[i] - x) * f)).join(',') + ')'; };
+async function shCfAdd(k) {
+  const b = shBox(), s = shSheet(); let v = null;
+  if (['gt', 'lt', 'eq', 'has'].includes(k)) { v = await ask(SH_CF[k].replace('…', ''), ''); if (v == null || v === '') return; }
+  shSnapshot(); (s.cf ||= []).push({b, k, v, bg: k === 'scale' ? null : nsh.bg.value}); shSaved();
+  toast('Règle ajoutée sur ' + shAddr(b.c1, b.r1) + ':' + shAddr(b.c2, b.r2));
+}
+function shCfClear() { const b = shBox(), s = shSheet(), n = (s.cf || []).length; shSnapshot(); s.cf = (s.cf || []).filter(R => R.b.c2 < b.c1 || R.b.c1 > b.c2 || R.b.r2 < b.r1 || R.b.r1 > b.r2); if (!s.cf.length) delete s.cf; shSaved(); toast((n - (s.cf || []).length) + ' règle(s) retirée(s)'); }
+// le tableau croisé : la sélection (titres sur la première ligne) résumée dans une nouvelle feuille, valeurs figées
+const SH_AGG = {sum: ['Somme', l => l.reduce((a, b) => a + b, 0)], count: ['Nombre', l => l.length], avg: ['Moyenne', l => l.reduce((a, b) => a + b, 0) / l.length], min: ['Minimum', l => Math.min(...l)], max: ['Maximum', l => Math.max(...l)]};
+function shPivot(b, rc, cc, vc, agg) {
+  const s = shSheet(), si = nsh.cur.data.sheets.indexOf(s), val = (c, r) => nsh.calc.value(si, shAddr(c, r)), key = x => x === '' || x == null ? '(vide)' : typeof x === 'boolean' ? (x ? 'VRAI' : 'FAUX') : x;
+  const cell = {}, rk = new Set(), ck = new Set();
+  for (let r = b.r1 + 1; r <= b.r2; r++) {
+    if (![...Array(b.c2 - b.c1 + 1)].some((_, i) => s.cells[shAddr(b.c1 + i, r)]?.raw)) continue;  // ligne vide
+    const R = key(val(rc, r)), C = cc < 0 ? '' : key(val(cc, r)), v = val(vc, r); rk.add(R); ck.add(C);
+    for (const k of [R + '' + C, R + '', '' + C, '']) (cell[k] ||= []).push(agg === 'count' ? 1 : typeof v === 'number' ? v : NaN);
+  }
+  const sort = l => [...l].sort((a, z) => typeof a === 'number' && typeof z === 'number' ? a - z : String(a).localeCompare(String(z), 'fr', {numeric: true}));
+  const rows = sort(rk), cols = cc < 0 ? [''] : sort(ck), [aName, fn] = SH_AGG[agg] || SH_AGG.sum, out = (l) => { const n = (l || []).filter(x => !isNaN(x)); return n.length ? +fn(n).toFixed(10) : ''; };
+  const cells = {}, put = (c, r, v, st) => { if (v !== '') cells[shAddr(c, r)] = {raw: typeof v === 'number' ? String(v).replace('.', ',') : String(v).replace(/^=/, "'="), ...(st ? {s: st} : {})}; };
+  const H = {b: true, bg: '#e8f0fe'};
+  put(0, 0, aName + ' de ' + val(vc, b.r1) + ' par ' + val(rc, b.r1) + (cc < 0 ? '' : ' et ' + val(cc, b.r1)), {b: true});
+  put(0, 1, String(val(rc, b.r1)), H); cols.forEach((C, j) => put(j + 1, 1, cc < 0 ? aName : String(C), H)); if (cc >= 0) put(cols.length + 1, 1, 'Total', H);
+  rows.forEach((R, i) => { put(0, i + 2, typeof R === 'number' ? R : String(R), {b: true}); cols.forEach((C, j) => put(j + 1, i + 2, out(cell[R + '' + C]))); if (cc >= 0) put(cols.length + 1, i + 2, out(cell[R + '']), {b: true}); });
+  const tr = rows.length + 2; put(0, tr, 'Total', H); cols.forEach((C, j) => put(j + 1, tr, out(cell[cc < 0 ? '' : '' + C]), H)); if (cc >= 0) put(cols.length + 1, tr, out(cell['']), H);
+  const d = nsh.cur.data; let n = 1; while (d.sheets.some(x => x.name === 'Croisé ' + n)) n++;
+  shSnapshot(); d.sheets.push({name: 'Croisé ' + n, cells, cw: {A: 180}}); d.cur = d.sheets.length - 1; nsh.sel = {c: 0, r: 0, c2: 0, r2: 0}; shSaved(true);
+  return d.sheets.at(-1);
+}
+function shPivotUi() {
+  const b = shBox(), s = shSheet(), si = nsh.cur.data.sheets.indexOf(s);
+  if (b.r2 - b.r1 < 1 || b.c1 === b.c2) return toast('Sélectionne d\'abord le tableau, avec sa ligne de titres et au moins deux colonnes', true);
+  document.querySelector('.shPiv')?.remove();
+  const heads = [...Array(b.c2 - b.c1 + 1)].map((_, i) => [b.c1 + i, String(nsh.calc.value(si, shAddr(b.c1 + i, b.r1)) || shColName(b.c1 + i))]);
+  const m = el('div', 'tbPop px on shPiv'), pick = (label, opts, v) => { const x = el('select', 'ofSel'); x.append(...opts.map(([k, l]) => Object.assign(el('option', '', l), {value: k}))); x.value = v; const L = el('label'); L.append(el('span', '', label), x); m.append(L); return x; };
+  m.append(el('b', '', 'Tableau croisé dynamique'));
+  const firstNum = heads.find(([c]) => typeof nsh.calc.value(si, shAddr(c, b.r1 + 1)) === 'number')?.[0] ?? heads.at(-1)[0];
+  const rS = pick('Lignes', heads, heads[0][0]), cS = pick('Colonnes', [[-1, '(aucune)'], ...heads], -1), vS = pick('Valeurs', heads, firstNum), aS = pick('Calcul', Object.entries(SH_AGG).map(([k, [l]]) => [k, l]), 'sum');
+  const row = el('div', 'row'), ok = el('button', 'btn main px', 'CRÉER'), no = el('button', 'btn px', 'ANNULER');
+  no.onclick = () => m.remove(); ok.onclick = () => { m.remove(); shPivot(b, +rS.value, +cS.value, +vS.value, aS.value); toast('Tableau croisé créé dans une nouvelle feuille'); };
+  row.append(no, ok); m.append(row, el('div', 'hint', 'Le résultat est figé : refais-le si les données changent.'));
+  const r = nsh.gridW.getBoundingClientRect(); m.style.left = (r.left + 40) + 'px'; m.style.top = (r.top + 20) + 'px'; document.body.append(m);
+}
 function shRefresh() {
   if (!nsh.cur) return;
   const s = shSheet(), si = nsh.cur.data.sheets.indexOf(s), calc = shCompute(nsh.cur.data); nsh.calc = calc;
-  const keys = Object.keys(s.cells).map(shCell).filter(Boolean);
+  const keys = Object.keys(s.cells).map(shCell).filter(Boolean), cf = s.cf?.length ? shCfStyle(s, si, calc) : {};
   if (keys.some(k => k.c >= nsh.cols || k.r >= nsh.rows)) return shBuild();
   for (const td of nsh.grid.querySelectorAll('td[data-c]')) {
     const a = shAddr(+td.dataset.c, +td.dataset.r), cell = s.cells[a];
@@ -527,7 +591,7 @@ function shRefresh() {
     const v = cell.raw ? calc.value(si, a) : '', st = cell.s || {};
     td.textContent = st.nf === 'text' ? cell.raw : shFmt(v, st);
     td.className = (isErr(v) ? 'err ' : '') + (typeof v === 'number' ? 'num' : '');
-    td.style.cssText = (st.b ? 'font-weight:bold;' : '') + (st.i ? 'font-style:italic;' : '') + (st.c ? 'color:' + st.c + ';' : '') + (st.bg ? 'background:' + st.bg + ';' : '') + (st.al ? 'text-align:' + st.al + ';' : '');
+    td.style.cssText = (st.b ? 'font-weight:bold;' : '') + (st.i ? 'font-style:italic;' : '') + (st.c ? 'color:' + st.c + ';' : '') + (st.bg ? 'background:' + st.bg + ';' : '') + (st.al ? 'text-align:' + st.al + ';' : '') + (cf[a] || '');
   }
   shSelShow();
 }
@@ -711,6 +775,7 @@ function ofChart(cv, type, labels, series) {  // shared with NeoSlides: bars, li
 }
 nsh.open = f => { nsh.cur = f; nsh.undo = []; nsh.redo = []; nsh.editing = false; nsh.edit.style.display = 'none'; f.data.cur = Math.min(f.data.cur || 0, f.data.sheets.length - 1); nsh.sel = {c: 0, r: 0, c2: 0, r2: 0}; shBuild(); setTimeout(() => nsh.gridW.focus(), 30); };
 nsh.close = () => { nsh.cur = null; };
+view.__sh = {nsh, pivot: shPivot, cfAdd: shCfAdd, cfStyle: shCfStyle};  // pour le test « local »
 nsh.icon = __icon('sheets'); ofRegister(nsh);  // (non indenté : les textes sur plusieurs lignes restent exactement les tiens)
   // ---- fin ----
   ctx.onOpen(() => { ofOpen('sheet'); });

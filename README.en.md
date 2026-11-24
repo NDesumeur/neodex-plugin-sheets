@@ -4,6 +4,10 @@ A spreadsheet inside NeoDex: cells, formulas and functions in French or English,
 
 *Version française : [README.md](README.md)*
 
+## Conditions and pivot table (new in 1.3.0)
+
+Conditional formatting (greater, less, equal, contains, colour scale, data bars) and a pivot table in a new sheet, with its totals.
+
 ## Your workbooks
 
 - **+ New** creates a workbook, saved automatically on every change.
@@ -28,6 +32,11 @@ At the bottom, the selection shows its **sum**, **average** and **count** of val
 - **Rows and columns**: insert above, below, left or right, or delete.
 - **Sort** rows by the selected column, A to Z or Z to A.
 - **Undo** (Ctrl+Z) and **Redo** (Ctrl+Y).
+
+## Conditions and pivot table (1.3.0)
+
+- **Conditions**: select cells, then "Greater than…", "Less than…", "Equal to…" or "Contains the text…": matching cells take the fill colour chosen in the bar. Also the **colour scale** (red → yellow → green) and **data bars**. "Clear the rules of the selection" removes them.
+- **⊞ Pivot**: select a table with its header row, then pick the rows, the columns (or none), the values and the calculation (sum, count, average, minimum, maximum). The summary, with its totals, lands in a new sheet. It is fixed: make it again if the data changes.
 
 ## Sheets
 

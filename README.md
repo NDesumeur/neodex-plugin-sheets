@@ -4,6 +4,10 @@ Un tableur dans NeoDex : cellules, formules et fonctions en français ou en angl
 
 *English version: [README.en.md](README.en.md)*
 
+## Conditions et tableau croisé (nouveau en 1.3.0)
+
+Mise en forme conditionnelle (plus grand, plus petit, égal, contient, échelle de couleurs, barres de données) et tableau croisé dynamique dans une nouvelle feuille, avec ses totaux.
+
 ## Tes classeurs
 
 - **+ Nouveau** crée un classeur, enregistré tout seul à chaque modification.
@@ -28,6 +32,11 @@ En bas, la sélection affiche sa **somme**, sa **moyenne** et le **nombre** de v
 - **Lignes et colonnes** : insérer au-dessus, en dessous, à gauche ou à droite, ou supprimer.
 - **Trier** les lignes selon la colonne sélectionnée, de A à Z ou de Z à A.
 - **Annuler** (Ctrl+Z) et **Rétablir** (Ctrl+Y).
+
+## Conditions et tableau croisé (1.3.0)
+
+- **Conditions** : choisis des cellules, puis « Plus grand que… », « Plus petit que… », « Égal à… » ou « Contient le texte… » : les cellules qui répondent prennent la couleur de fond choisie dans la barre. Aussi l’**échelle de couleurs** (rouge → jaune → vert) et les **barres de données**. « Effacer les règles de la sélection » les retire.
+- **⊞ Croisé** : choisis un tableau avec sa ligne de titres, puis les lignes, les colonnes (ou aucune), les valeurs et le calcul (somme, nombre, moyenne, minimum, maximum). Le résumé, avec ses totaux, arrive dans une nouvelle feuille. Il est figé : refais-le si les données changent.
 
 ## Feuilles
 
